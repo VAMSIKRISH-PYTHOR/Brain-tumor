@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Brain Tumor MRI Detection & Classification – Project Documentation</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    :root {
+      --primary: #1a56db;
+      --accent:  #7c3aed;
+      --text:    #1e293b;
+      --muted:   #64748b;
+      --bg:      #ffffff;
+      --card:    #f8fafc;
+      --border:  #e2e8f0;
+      --code-bg: #1e1e2e;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      font-size: 11pt;
+      line-height: 1.7;
+      color: var(--text);
+      background: var(--bg);
+      max-width: 210mm;
+      margin: 0 auto;
+      padding: 10mm 15mm;
+    }
+
+    .cover {
+      min-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      page-break-after: always;
+      border-bottom: 3px solid var(--primary);
+      padding: 40px 20px;
+    }
+    .cover .brain-icon { font-size: 80px; margin-bottom: 20px; }
+    .cover h1 { font-size: 24pt; font-weight: 700; color: var(--primary); line-height: 1.2; margin-bottom: 12px; }
+    .cover .subtitle { font-size: 12pt; color: var(--muted); margin-bottom: 30px; font-weight: 400; }
+    .cover .badges { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 20px 0; }
+    .badge { background: var(--primary); color: white; padding: 5px 14px; border-radius: 20px; font-size: 9pt; font-weight: 600; }
+    .badge.purple { background: var(--accent); }
+    .badge.green  { background: #059669; }
+    .badge.gray   { background: var(--muted); }
+    .cover-meta { margin-top: 40px; border-top: 1px solid var(--border); padding-top: 20px; color: var(--muted); font-size: 10pt; width: 100%; }
+    .cover-meta table { width: 100%; border-collapse: collapse; }
+    .cover-meta td { padding: 5px 20px; text-align: left; }
+    .cover-meta td:first-child { font-weight: 600; color: var(--text); text-align: right; }
+
+    .toc { page-break-after: always; }
+    .toc h2 { font-size: 18pt; color: var(--primary); margin-bottom: 20px; border-bottom: 2px solid var(--primary); padding-bottom: 8px; }
+    .toc ol { padding-left: 22px; }
+    .toc li { margin: 8px 0; font-size: 11pt; }
+    .toc li a { color: var(--text); text-decoration: none; }
+    .toc .sub { padding-left: 20px; margin-top: 4px; }
+    .toc .sub li { font-size: 10pt; color: var(--muted); margin: 4px 0; }
+
+    section { margin-bottom: 36px; }
+    h2 { font-size: 16pt; font-weight: 700; color: var(--primary); margin: 32px 0 14px; padding-bottom: 8px; border-bottom: 2px solid var(--border); }
+    h3 { font-size: 13pt; font-weight: 600; color: var(--text); margin: 22px 0 10px; }
+    h4 { font-size: 9.5pt; font-weight: 600; color: var(--accent); margin: 16px 0 8px; text-transform: uppercase; letter-spacing: 0.6px; }
+    p { margin-bottom: 10px; color: var(--text); }
+
+    .pipeline {
+      background: var(--code-bg);
+      color: #cdd6f4;
+      border-radius: 10px;
+      padding: 20px 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9pt;
+      line-height: 1.9;
+      margin: 16px 0;
+      white-space: pre;
+    }
+
+    pre, code { font-family: 'JetBrains Mono', monospace; font-size: 9pt; }
+    pre { background: var(--code-bg); color: #cdd6f4; border-radius: 8px; padding: 16px 20px; margin: 12px 0; overflow-x: auto; line-height: 1.7; }
+    code { background: #ede9fe; color: var(--accent); padding: 1px 6px; border-radius: 4px; font-size: 9pt; }
+
+    table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 10pt; }
+    thead tr { background: var(--primary); color: white; }
+    thead th { padding: 10px 14px; text-align: left; font-weight: 600; font-size: 9.5pt; }
+    tbody tr { border-bottom: 1px solid var(--border); }
+    tbody tr:nth-child(even) { background: var(--card); }
+    tbody td { padding: 9px 14px; }
+    .winner { background: #ecfdf5 !important; font-weight: 700; color: #065f46; }
+
+    .info-box { border-left: 4px solid var(--primary); background: #eff6ff; padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 14px 0; font-size: 10.5pt; }
+    .info-box.purple { border-color: var(--accent); background: #f5f3ff; }
+    .info-box.green  { border-color: #059669; background: #ecfdf5; }
+    .info-box.orange { border-color: #d97706; background: #fffbeb; }
+
+    .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+    .card h4 { margin-top: 0; }
+    .card ul { padding-left: 18px; }
+    .card li { font-size: 10pt; margin: 4px 0; color: var(--muted); }
+
+    .metric-row { display: flex; gap: 12px; margin: 16px 0; flex-wrap: wrap; }
+    .metric { flex: 1; min-width: 100px; background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; padding: 16px 12px; border-radius: 10px; text-align: center; }
+    .metric .val { font-size: 20pt; font-weight: 700; display: block; }
+    .metric .lbl { font-size: 8pt; opacity: 0.85; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; }
+
+    .tree { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; font-family: 'JetBrains Mono', monospace; font-size: 9pt; line-height: 2; }
+    .tree .dir  { color: var(--primary); font-weight: 600; }
+    .tree .comment { color: var(--muted); }
+
+    ul, ol { padding-left: 22px; margin-bottom: 10px; }
+    li { margin: 5px 0; }
+
+    .page-break { page-break-before: always; }
+
+    @media print {
+      body { padding: 0; font-size: 10pt; }
+      .cover { min-height: auto; padding: 30px 0; }
+      a { color: inherit; text-decoration: none; }
+      pre { font-size: 8pt; }
+      .pipeline { font-size: 8pt; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover">
+  <div class="brain-icon">🧠</div>
+  <h1>Brain Tumor Detection &amp; Multi-Class Classification Pipeline</h1>
+  <p class="subtitle">
+    An End-to-End Medical Computer Vision &amp; Evolutionary Machine Learning Framework<br>
+    for MRI-based Tumor Diagnosis using Deep Transfer Learning &amp; Genetic Algorithm Optimisation
+  </p>
+  <div class="badges">
+    <span class="badge">Python 3.12</span>
+    <span class="badge">PyTorch 2.x</span>
+    <span class="badge purple">EfficientNetB0</span>
+    <span class="badge purple">Genetic Algorithm</span>
+    <span class="badge green">SVM · RF · XGBoost</span>
+    <span class="badge gray">Streamlit Web App</span>
+  </div>
+  <div class="cover-meta">
+    <table>
+      <tr><td>Project Title</td><td>Brain Tumor Detection and Classification through Optimised Computational Intelligence using MRI Scans</td></tr>
+      <tr><td>Dataset</td><td>Kaggle – Masoud Nickparvar Brain Tumor MRI Dataset (7,200 scans)</td></tr>
+      <tr><td>Classes</td><td>Glioma · Meningioma · Pituitary · No Tumor (4-class)</td></tr>
+      <tr><td>Champion Model</td><td>SVM (RBF Kernel) — 92.59% Test Accuracy, ROC-AUC 0.9802</td></tr>
+      <tr><td>Framework</td><td>PyTorch · scikit-learn · XGBoost · Streamlit · OpenCV</td></tr>
+      <tr><td>Date</td><td>October 2026</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc">
+  <h2>Table of Contents</h2>
+  <ol>
+    <li><a href="#overview">Project Overview &amp; Objectives</a></li>
+    <li><a href="#architecture">System Architecture &amp; Pipeline</a></li>
+    <li><a href="#dataset">Dataset Description</a></li>
+    <li>
+      <a href="#pipeline-stages">Pipeline Stages — Technical Details</a>
+      <ol class="sub">
+        <li><a href="#stage12">Stage 1 &amp; 2 – Data Download &amp; Preprocessing</a></li>
+        <li><a href="#stage3">Stage 3 – Tumor ROI Segmentation</a></li>
+        <li><a href="#stage4">Stage 4 – Data Augmentation &amp; DataLoaders</a></li>
+        <li><a href="#stage5">Stage 5 – Deep Feature Extraction (EfficientNetB0)</a></li>
+        <li><a href="#stage6">Stage 6 – Genetic Algorithm Feature Selection</a></li>
+        <li><a href="#stage7">Stage 7 – Classifier Training &amp; Hyperparameter Tuning</a></li>
+        <li><a href="#stage8">Stage 8 – Model Evaluation &amp; Metrics</a></li>
+        <li><a href="#stage9">Stage 9 – Streamlit Inference Web Application</a></li>
+      </ol>
+    </li>
+    <li><a href="#results">Results &amp; Performance Benchmark</a></li>
+    <li><a href="#config">Configuration &amp; Hyperparameters</a></li>
+    <li><a href="#structure">Project Directory Structure</a></li>
+    <li><a href="#installation">Installation &amp; Quick Start</a></li>
+    <li><a href="#artifacts">Generated Figures &amp; Artifacts</a></li>
+    <li><a href="#dependencies">Dependencies</a></li>
+  </ol>
+</div>
+
+<!-- 1. OVERVIEW -->
+<section id="overview">
+  <h2>1. Project Overview &amp; Objectives</h2>
+  <p>
+    This project presents a comprehensive end-to-end deep learning and evolutionary optimisation framework
+    for automated brain tumor detection and multi-class classification from Magnetic Resonance Imaging (MRI) scans.
+    The system combines <strong>convolutional deep feature extraction</strong> via transfer learning,
+    a <strong>Genetic Algorithm (GA)</strong> for intelligent feature selection, and a benchmarked suite of
+    machine learning classifiers, packaged in a real-time interactive <strong>Streamlit web application</strong>.
+  </p>
+
+  <h3>Objectives</h3>
+  <ul>
+    <li>Automatically detect and classify brain tumors from raw MRI scans into four diagnostic classes.</li>
+    <li>Apply clinically relevant image preprocessing (CLAHE, denoising, normalization) to enhance feature quality.</li>
+    <li>Extract rich semantic features from pretrained EfficientNetB0 through fine-tuned transfer learning.</li>
+    <li>Reduce the 1,280-dimensional feature space using a Binary Genetic Algorithm, removing redundant features while preserving accuracy.</li>
+    <li>Train, tune, and benchmark four classifiers (Softmax, SVM, Random Forest, XGBoost) using cross-validated hyperparameter search.</li>
+    <li>Deploy an interactive inference web app enabling real-time MRI diagnosis with visual explainability.</li>
+  </ul>
+
+  <h3>Tumor Classification Classes</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>Glioma</h4>
+      <p style="font-size:10pt; color:var(--muted)">Arises from glial cells in the brain and spinal cord. Among the most common and aggressive primary brain tumors.</p>
+    </div>
+    <div class="card">
+      <h4>Meningioma</h4>
+      <p style="font-size:10pt; color:var(--muted)">Tumor arising from the meninges (brain membranes). Usually benign but can compress adjacent brain tissue.</p>
+    </div>
+    <div class="card">
+      <h4>Pituitary</h4>
+      <p style="font-size:10pt; color:var(--muted)">Tumor in the pituitary gland at the brain base. Often benign but can disrupt hormone regulation.</p>
+    </div>
+    <div class="card">
+      <h4>No Tumor</h4>
+      <p style="font-size:10pt; color:var(--muted)">Healthy MRI scan with no observable tumor mass — the negative class in the 4-way diagnostic classification.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 2. ARCHITECTURE -->
+<section id="architecture">
+  <h2>2. System Architecture &amp; Pipeline</h2>
+  <p>The pipeline is a sequential, modular system where each stage produces artifacts consumed by the next. This enables independent re-running of any stage and full reproducibility.</p>
+  <div class="pipeline">   Raw MRI Input (7,200 scans from Kaggle)
+           |
+           v
+ +--------------------------------------------------+
+ |  Stage 1: Kaggle Dataset Download (API)          |
+ |  -> data/raw/  (glioma / meningioma /            |
+ |                 pituitary / notumor)              |
+ +--------------------------------------------------+
+           |
+           v
+ +--------------------------------------------------+
+ |  Stage 2: Preprocessing &amp; Stratified Splitting   |
+ |  Resize 224x224 -> Median Blur (3x3) -> CLAHE   |
+ |  -> Min-Max Norm -> 70/15/15 Split CSVs          |
+ +--------------------------------------------------+
+           |
+           v
+ +--------------------------------------------------+
+ |  Stage 3: Morphological Tumor ROI Segmentation   |
+ |  Brain Isolation -> Adaptive Thresholding        |
+ |  -> Morphological Ops -> Connected Components    |
+ +--------------------------------------------------+
+           |
+           v
+ +--------------------------------------------------+
+ |  Stage 4: PyTorch DataLoader &amp; Augmentation      |
+ |  +/-15 deg Rotation · Horizontal Flip · Zoom    |
+ |  ImageNet Normalization (mean/std)               |
+ +--------------------------------------------------+
+           |
+           v
+ +--------------------------------------------------+
+ |  Stage 5: EfficientNetB0 Transfer Learning       |
+ |  Fine-tune last 20 layers -> GAP Feature Head   |
+ |  Output: 1,280-D feature vectors per image       |
+ +--------------------------------------------------+
+           |
+           v
+ +--------------------------------------------------+
+ |  Stage 6: Genetic Algorithm Feature Selection    |
+ |  Binary Chromosome · Tournament Selection        |
+ |  Uniform Crossover · Bit-Flip Mutation           |
+ |  1,280 features  -->  630 optimal features       |
+ |  (50.78% dimensionality reduction)               |
+ +--------------------------------------------------+
+           |
+           v
+ +--------------------------------------------------+
+ |  Stage 7: Classifier Benchmark &amp; Tuning          |
+ |  Softmax · SVM-RBF · Random Forest · XGBoost   |
+ |  5-Fold StratifiedKFold + GridSearchCV           |
+ +--------------------------------------------------+
+           |
+           v
+ +--------------------------------------------------+
+ |  Stage 8: Evaluation · ROC-AUC · Confusion Mat  |
+ |  Accuracy · Precision · Recall · Specificity    |
+ |  F1-Score · OvR ROC-AUC per class               |
+ +--------------------------------------------------+
+           |
+           v
+ +--------------------------------------------------+
+ |  Stage 9: Streamlit Inference Web Application    |
+ |  Upload MRI -> Preprocess -> Feature Extract    |
+ |  -> GA Mask -> Classify -> ROI + Charts          |
+ +--------------------------------------------------+</div>
+</section>
+
+<!-- 3. DATASET -->
+<section id="dataset">
+  <h2>3. Dataset Description</h2>
+  <p>
+    The dataset used is the publicly available
+    <strong>Masoud Nickparvar Brain Tumor MRI Dataset</strong> from Kaggle
+    (<code>masoudnickparvar/brain-tumor-mri-dataset</code>).
+  </p>
+  <table>
+    <thead><tr><th>Attribute</th><th>Detail</th></tr></thead>
+    <tbody>
+      <tr><td>Total Images</td><td>7,200 MRI scans (processed)</td></tr>
+      <tr><td>Format</td><td>JPEG / PNG, grayscale MRI brain scans</td></tr>
+      <tr><td>Classes</td><td>Glioma, Meningioma, Pituitary, No Tumor</td></tr>
+      <tr><td>Source Split</td><td>Pre-split into Training and Testing folders</td></tr>
+      <tr><td>Access</td><td>Kaggle API (automated download via dataset_setup.py)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Stratified Dataset Splits</h3>
+  <table>
+    <thead><tr><th>Split</th><th>Ratio</th><th>Glioma</th><th>Meningioma</th><th>Pituitary</th><th>No Tumor</th><th>Total</th></tr></thead>
+    <tbody>
+      <tr><td>Train</td><td>70%</td><td>~1,260</td><td>~1,260</td><td>~1,260</td><td>~1,260</td><td>~5,040</td></tr>
+      <tr><td>Validation</td><td>15%</td><td>~270</td><td>~270</td><td>~270</td><td>~270</td><td>~1,080</td></tr>
+      <tr><td>Test</td><td>15%</td><td>~270</td><td>~270</td><td>~270</td><td>~270</td><td>~1,080</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:9.5pt; color:var(--muted)">
+    Splits are generated using <code>sklearn.model_selection.train_test_split</code> with stratification on class labels and a fixed <code>random_state=42</code>. Metadata saved as CSV index files.
+  </p>
+</section>
+
+<!-- 4. PIPELINE STAGES -->
+<section id="pipeline-stages" class="page-break">
+  <h2>4. Pipeline Stages — Technical Details</h2>
+
+  <h3 id="stage12">4.1 Stage 1 &amp; 2 — Data Download &amp; Preprocessing</h3>
+  <p><strong>Modules:</strong> <code>src/dataset_setup.py</code> &amp; <code>src/preprocessing.py</code></p>
+
+  <h4>Image Preprocessing Pipeline</h4>
+  <p>Each raw MRI image is processed through the following sequential steps via <code>preprocess_single_image()</code>:</p>
+  <ol>
+    <li><strong>Grayscale Conversion</strong> — MRI images are read/converted to single-channel grayscale.</li>
+    <li><strong>Resize</strong> — All images resized to <code>224 × 224</code> px using <code>cv2.INTER_AREA</code> interpolation (optimal for downsampling).</li>
+    <li><strong>Median Filter Denoising</strong> — A <code>3×3</code> median blur kernel suppresses salt-and-pepper noise while preserving edges.</li>
+    <li><strong>CLAHE Enhancement</strong> — Contrast Limited Adaptive Histogram Equalization (<code>clipLimit=2.0</code>, <code>tileGridSize=(8,8)</code>) enhances local contrast in tumor regions.</li>
+    <li><strong>Min-Max Normalization</strong> — Pixel values scaled to <code>[0.0, 1.0]</code> float32.</li>
+    <li><strong>3-Channel Conversion</strong> — Grayscale stacked to 3-channel BGR for EfficientNetB0 compatibility.</li>
+  </ol>
+
+  <div class="info-box">
+    <strong>Why CLAHE?</strong> Standard histogram equalization applies a global transformation, washing out subtle tumor boundaries. CLAHE applies localized enhancement tile-by-tile, making tumor regions more distinguishable without over-amplifying background noise.
+  </div>
+
+  <pre>img_resized  = cv2.resize(img, (224,224), interpolation=cv2.INTER_AREA)
+img_denoised = cv2.medianBlur(img_resized, 3)
+clahe        = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+img_clahe    = clahe.apply(img_denoised)
+img_norm     = img_clahe.astype(np.float32) / 255.0     # Normalize to [0,1]
+img_bgr      = cv2.cvtColor((img_norm*255).astype(np.uint8), cv2.COLOR_GRAY2BGR)</pre>
+
+  <h3 id="stage3">4.2 Stage 3 — Tumor ROI Segmentation</h3>
+  <p><strong>Module:</strong> <code>src/segmentation.py</code></p>
+  <p>The <code>extract_roi_otsu()</code> function implements a morphology-based region-of-interest extractor for overlay visualization. A full Lightweight U-Net is also implemented for optional future pixel-precise segmentation.</p>
+
+  <h4>Segmentation Steps</h4>
+  <ol>
+    <li><strong>Brain Isolation</strong> — Separates brain tissue from the black MRI background.</li>
+    <li><strong>Adaptive Intensity Thresholding</strong> — Targets hyper-intense tumor regions dynamically.</li>
+    <li><strong>Morphological Operations</strong> — Erosion and dilation clean the binary mask.</li>
+    <li><strong>Connected-Component Analysis</strong> — Filters components by area, eccentricity, and position to select the most plausible tumor candidate.</li>
+    <li><strong>Bounding Box Extraction</strong> — Computes <code>(x, y, w, h)</code> ROI bounding box.</li>
+    <li><strong>Coverage Rejection</strong> — Masks covering &gt;85% of the image are rejected as spurious detections.</li>
+  </ol>
+
+  <h3 id="stage4">4.3 Stage 4 — Data Augmentation &amp; PyTorch DataLoaders</h3>
+  <p><strong>Module:</strong> <code>src/data_loader.py</code></p>
+  <table>
+    <thead><tr><th>Augmentation</th><th>Parameters</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td>Random Rotation</td><td>±15°</td><td>Scan orientation invariance</td></tr>
+      <tr><td>Horizontal Flip</td><td>p = 0.5</td><td>Bilateral symmetry augmentation</td></tr>
+      <tr><td>Random Zoom/Crop</td><td>Scale 0.8–1.0</td><td>Scale invariance</td></tr>
+      <tr><td>ImageNet Normalize</td><td>μ=[0.485,0.456,0.406], σ=[0.229,0.224,0.225]</td><td>EfficientNet compatibility</td></tr>
+    </tbody>
+  </table>
+  <p>Validation and test loaders use only resize + ImageNet normalization (no augmentation).</p>
+
+  <h3 id="stage5" class="page-break">4.4 Stage 5 — Deep Feature Extraction (EfficientNetB0)</h3>
+  <p><strong>Module:</strong> <code>src/feature_extractor.py</code></p>
+  <p><strong>EfficientNetB0</strong> pretrained on ImageNet-1K is used as the deep feature backbone. A two-phase fine-tuning strategy is applied:</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>Phase 1 – Freeze</h4>
+      <ul>
+        <li>All model parameters frozen</li>
+        <li>Preserves pretrained representations</li>
+        <li>Prevents catastrophic forgetting</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Phase 2 – Fine-tune</h4>
+      <ul>
+        <li>Last 20 layers unfrozen</li>
+        <li>Classifier head: Linear(1280 → 4)</li>
+        <li>Adam optimizer, lr = 1e-4</li>
+        <li>CrossEntropyLoss, 3–10 epochs</li>
+      </ul>
+    </div>
+  </div>
+
+  <p>After fine-tuning, the classification head is removed. The backbone's <strong>Global Average Pooling (GAP)</strong> layer produces a <strong>1,280-dimensional feature vector</strong> per MRI image. Feature arrays are saved as NumPy <code>.npy</code> files.</p>
+
+  <pre>feature_extractor = nn.Sequential(
+    *list(model.children())[:-1],
+    nn.AdaptiveAvgPool2d((1, 1))    # -> (B, 1280, 1, 1)
+)
+features = torch.flatten(features, 1)  # -> (B, 1280)</pre>
+
+  <h3 id="stage6">4.5 Stage 6 — Genetic Algorithm Feature Selection</h3>
+  <p><strong>Module:</strong> <code>src/optimization/ga_selector.py</code> &amp; <code>src/optimization/fitness.py</code></p>
+  <p>A custom <strong>Binary Genetic Algorithm (GA)</strong> solves the NP-hard combinatorial feature subset selection problem. Each chromosome is a 1,280-bit binary vector where <code>1</code> = select, <code>0</code> = discard.</p>
+
+  <h4>GA Configuration</h4>
+  <table>
+    <thead><tr><th>Parameter</th><th>Value</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>Population Size</td><td>30</td><td>Number of chromosomes per generation</td></tr>
+      <tr><td>Generations</td><td>40</td><td>Number of evolutionary iterations</td></tr>
+      <tr><td>Crossover Rate</td><td>0.80</td><td>Probability of uniform crossover</td></tr>
+      <tr><td>Mutation Rate</td><td>0.05</td><td>Per-bit flip probability</td></tr>
+      <tr><td>Tournament Size</td><td>3</td><td>Selection pressure</td></tr>
+      <tr><td>Alpha Penalty (α)</td><td>0.01</td><td>Fitness penalty per feature ratio</td></tr>
+      <tr><td>Random Seed</td><td>42</td><td>Reproducibility</td></tr>
+    </tbody>
+  </table>
+
+  <div class="info-box green">
+    <strong>Fitness Function:</strong><br>
+    <code>Fitness(chromosome) = Validation_Accuracy − α × (Selected_Features / Total_Features)</code><br>
+    This penalises large feature subsets, driving the GA to find the most compact yet accurate feature set.
+  </div>
+
+  <h4>Evolutionary Operators</h4>
+  <ul>
+    <li><strong>Initialization:</strong> Random binary population (Bernoulli p=0.5 per bit).</li>
+    <li><strong>Selection:</strong> Tournament selection (size=3) — three random individuals compete; the fittest wins.</li>
+    <li><strong>Crossover:</strong> Uniform crossover — each bit independently inherited from either parent with equal probability.</li>
+    <li><strong>Mutation:</strong> Bit-flip mutation (XOR with random mask) at rate 0.05 per bit.</li>
+    <li><strong>Elitism:</strong> Global best chromosome is always carried forward unchanged.</li>
+    <li><strong>Parallelism:</strong> Fitness evaluation parallelised across all CPU cores via <code>joblib.Parallel</code>.</li>
+  </ul>
+
+  <h4>GA Results</h4>
+  <div class="metric-row">
+    <div class="metric"><span class="val">1,280</span><span class="lbl">Original Features</span></div>
+    <div class="metric"><span class="val">630</span><span class="lbl">Selected Features</span></div>
+    <div class="metric"><span class="val">50.78%</span><span class="lbl">Dim. Reduction</span></div>
+    <div class="metric"><span class="val">40</span><span class="lbl">Generations</span></div>
+  </div>
+
+  <h3 id="stage7" class="page-break">4.6 Stage 7 — Classifier Training &amp; Hyperparameter Tuning</h3>
+  <p><strong>Module:</strong> <code>src/classifier.py</code></p>
+  <p>Four classifiers are trained on the 630 GA-selected features using <strong>5-fold Stratified Cross-Validation</strong> with <code>GridSearchCV</code>.</p>
+
+  <table>
+    <thead><tr><th>Classifier</th><th>Algorithm</th><th>Hyperparameter Grid</th></tr></thead>
+    <tbody>
+      <tr><td>Softmax</td><td>Multinomial Logistic Regression (lbfgs solver)</td><td>C ∈ {0.1, 1.0, 10.0}</td></tr>
+      <tr><td>SVM (RBF) 🏆</td><td>Support Vector Machine, RBF kernel + Platt calibration</td><td>C ∈ {1.0, 10.0}, gamma = scale</td></tr>
+      <tr><td>Random Forest</td><td>Ensemble of decision trees (Gini impurity)</td><td>n_estimators ∈ {100, 200}, max_depth ∈ {20, None}</td></tr>
+      <tr><td>XGBoost</td><td>Gradient Boosted Trees (hist method, mlogloss)</td><td>n_est ∈ {50,100}, depth ∈ {4,6}, lr=0.1</td></tr>
+    </tbody>
+  </table>
+
+  <div class="info-box">
+    <strong>SVM Probability Calibration:</strong> The SVM uses Platt scaling (<code>CalibratedClassifierCV</code>) to produce reliable class probability estimates, enabling ROC-AUC computation and probability charts in the web app.
+  </div>
+
+  <h3 id="stage8">4.7 Stage 8 — Model Evaluation &amp; Metrics</h3>
+  <p><strong>Module:</strong> <code>src/evaluate.py</code></p>
+  <p>All four classifiers are evaluated on the held-out test set (1,080 MRI scans). Computed metrics:</p>
+  <ul>
+    <li><strong>Accuracy</strong> — Percentage of correctly classified samples.</li>
+    <li><strong>Precision (Macro)</strong> — Average precision across all 4 classes, equally weighted.</li>
+    <li><strong>Recall / Sensitivity (Macro)</strong> — Ability to correctly detect each tumor type.</li>
+    <li><strong>Specificity (Macro)</strong> — True Negative Rate: <code>TN / (TN + FP)</code>, macro-averaged.</li>
+    <li><strong>F1-Score (Macro)</strong> — Harmonic mean of Precision and Recall.</li>
+    <li><strong>ROC-AUC (One-vs-Rest)</strong> — Area under ROC curve per class vs. rest, macro-averaged.</li>
+  </ul>
+  <p>All metrics and plots are saved to <code>reports/metrics.json</code> and <code>reports/figures/</code>.</p>
+
+  <h3 id="stage9">4.8 Stage 9 — Streamlit Inference Web Application</h3>
+  <p><strong>Module:</strong> <code>app/streamlit_app.py</code></p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>MRI Upload</h4>
+      <ul><li>Supports JPEG, PNG, BMP</li><li>Real-time preprocessing preview</li><li>CLAHE enhancement visualisation</li></ul>
+    </div>
+    <div class="card">
+      <h4>Tumor ROI Overlay</h4>
+      <ul><li>Otsu segmentation bounding box</li><li>Highlighted region-of-interest</li><li>Original vs. segmented comparison</li></ul>
+    </div>
+    <div class="card">
+      <h4>Probability Chart</h4>
+      <ul><li>4-class probability bars</li><li>Confidence score per tumor type</li><li>SVM (RBF) champion model</li></ul>
+    </div>
+    <div class="card">
+      <h4>Benchmark Dashboard</h4>
+      <ul><li>All classifier metrics displayed</li><li>Confusion matrix heatmaps</li><li>ROC-AUC curves per class</li></ul>
+    </div>
+  </div>
+
+  <h4>Inference Pipeline (per uploaded image)</h4>
+  <pre>MRI Upload
+  -> preprocess_single_image()          # CLAHE + Median Blur + Norm
+  -> extract_roi_otsu()                  # Tumor ROI bounding box
+  -> PyTorchFeatureExtractor.extract()   # EfficientNetB0 -> 1,280-D
+  -> Apply GA mask                       # 1,280 -> 630 features
+  -> best_classifier.predict_proba()     # SVM -> 4-class probabilities
+  -> Display: label + confidence + ROI overlay + charts</pre>
+
+  <p><strong>Launch:</strong> <code>.\venv\Scripts\python.exe -m streamlit run app/streamlit_app.py</code> → <strong>http://localhost:8501</strong></p>
+</section>
+
+<!-- 5. RESULTS -->
+<section id="results" class="page-break">
+  <h2>5. Results &amp; Performance Benchmark</h2>
+  <p>Evaluated on the <strong>independent test set of 1,080 MRI scans</strong>, all classifiers operating on the <strong>630 GA-selected features</strong> from fine-tuned EfficientNetB0.</p>
+
+  <div class="metric-row">
+    <div class="metric"><span class="val">92.59%</span><span class="lbl">Best Accuracy (SVM)</span></div>
+    <div class="metric"><span class="val">0.9802</span><span class="lbl">ROC-AUC (SVM)</span></div>
+    <div class="metric"><span class="val">97.53%</span><span class="lbl">Specificity (SVM)</span></div>
+    <div class="metric"><span class="val">630</span><span class="lbl">Features Used</span></div>
+  </div>
+
+  <h3>Full Benchmark Table</h3>
+  <table>
+    <thead>
+      <tr><th>Classifier</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>Specificity</th><th>F1-Score</th><th>ROC-AUC</th></tr>
+    </thead>
+    <tbody>
+      <tr class="winner">
+        <td>SVM (RBF Kernel) 🏆</td><td>92.59%</td><td>92.65%</td><td>92.59%</td><td>97.53%</td><td>92.60%</td><td>0.9802</td>
+      </tr>
+      <tr><td>Softmax (Logistic Reg.)</td><td>88.89%</td><td>89.01%</td><td>88.89%</td><td>96.30%</td><td>88.92%</td><td>0.9802</td></tr>
+      <tr><td>XGBoost</td><td>88.52%</td><td>88.61%</td><td>88.52%</td><td>96.17%</td><td>88.54%</td><td>0.9797</td></tr>
+      <tr><td>Random Forest</td><td>88.15%</td><td>88.16%</td><td>88.15%</td><td>96.05%</td><td>88.10%</td><td>0.9776</td></tr>
+    </tbody>
+  </table>
+
+  <div class="info-box green">
+    <strong>Champion Classifier:</strong> The <strong>SVM with RBF Kernel</strong> achieved the highest test accuracy of <strong>92.59%</strong>, specificity of <strong>97.53%</strong>, and ROC-AUC of <strong>0.9802</strong> — using just 630 out of 1,280 features (50.78% dimensionality reduction via GA). The GA-driven feature selection not only reduced computational cost but actively improved classifier discriminability by removing noisy features.
+  </div>
+
+  <h3>Key Observations</h3>
+  <ul>
+    <li>All four classifiers achieve <strong>ROC-AUC &gt; 0.97</strong>, confirming EfficientNetB0 captures highly discriminative representations.</li>
+    <li>The SVM's RBF kernel effectively handles non-linear separability of the 630-D feature manifold.</li>
+    <li>XGBoost and Softmax perform comparably (~88.5–89%), indicating feature quality is the primary driver.</li>
+    <li>The GA's 50.78% feature reduction decreases inference latency by ~50% with a net accuracy gain over using all 1,280 features.</li>
+  </ul>
+</section>
+
+<!-- 6. CONFIG -->
+<section id="config">
+  <h2>6. Configuration &amp; Hyperparameters</h2>
+  <p>All global settings are centralised in <code>src/config.py</code>:</p>
+  <table>
+    <thead><tr><th>Category</th><th>Parameter</th><th>Value</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="3"><strong>Preprocessing</strong></td><td>IMAGE_SIZE</td><td>(224, 224)</td><td>Target image dimensions (H × W)</td></tr>
+      <tr><td>CLAHE_CLIP_LIMIT</td><td>2.0</td><td>CLAHE contrast clip limit</td></tr>
+      <tr><td>MEDIAN_BLUR_KERNEL</td><td>3</td><td>Kernel size for median denoising</td></tr>
+      <tr><td rowspan="3"><strong>Deep Learning</strong></td><td>BACKBONE_NAME</td><td>EfficientNetB0</td><td>CNN feature extractor backbone</td></tr>
+      <tr><td>FINE_TUNE_LAYERS</td><td>20</td><td>Number of layers unfrozen for fine-tuning</td></tr>
+      <tr><td>LEARNING_RATE</td><td>1e-4</td><td>Adam optimizer learning rate</td></tr>
+      <tr><td rowspan="2"><strong>Training</strong></td><td>BATCH_SIZE</td><td>32 / 64</td><td>Mini-batch size for DataLoader</td></tr>
+      <tr><td>NUM_EPOCHS</td><td>3 – 10</td><td>Fine-tuning epochs</td></tr>
+      <tr><td rowspan="5"><strong>Genetic Algorithm</strong></td><td>GA_POP_SIZE</td><td>30</td><td>Population size</td></tr>
+      <tr><td>GA_GENERATIONS</td><td>40</td><td>Number of GA generations</td></tr>
+      <tr><td>GA_CROSSOVER_RATE</td><td>0.80</td><td>Crossover probability</td></tr>
+      <tr><td>GA_MUTATION_RATE</td><td>0.05</td><td>Per-bit mutation probability</td></tr>
+      <tr><td>GA_ALPHA_PENALTY</td><td>0.01</td><td>Feature count penalty weight</td></tr>
+      <tr><td rowspan="2"><strong>Dataset</strong></td><td>SPLIT_RATIOS</td><td>70/15/15</td><td>Train/Val/Test ratios</td></tr>
+      <tr><td>RANDOM_SEED</td><td>42</td><td>Global reproducibility seed</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 7. STRUCTURE -->
+<section id="structure">
+  <h2>7. Project Directory Structure</h2>
+  <div class="tree">
+<span class="dir">Brain tumor/</span>
+├── <span class="dir">app/</span>
+│   └── streamlit_app.py         <span class="comment"># Stage 9: Streamlit inference web app</span>
+├── <span class="dir">data/</span>
+│   ├── <span class="dir">raw/</span>                     <span class="comment"># Downloaded Kaggle MRI dataset (4 class folders)</span>
+│   ├── <span class="dir">processed/</span>               <span class="comment"># 224×224 CLAHE-preprocessed images</span>
+│   └── <span class="dir">splits/</span>
+│       ├── train_split.csv      <span class="comment"># 70% stratified training index</span>
+│       ├── val_split.csv        <span class="comment"># 15% validation index</span>
+│       └── test_split.csv       <span class="comment"># 15% held-out test index</span>
+├── <span class="dir">models/</span>
+│   ├── efficientnet_b0_finetuned.pth  <span class="comment"># Fine-tuned backbone weights</span>
+│   ├── ga_selected_features.npy       <span class="comment"># 630-bit binary feature mask</span>
+│   ├── best_classifier.joblib         <span class="comment"># Champion SVM model</span>
+│   ├── all_classifiers.joblib         <span class="comment"># All 4 tuned classifier heads</span>
+│   └── X_train/val/test.npy           <span class="comment"># 1,280-D extracted feature arrays</span>
+├── <span class="dir">reports/</span>
+│   ├── metrics.json             <span class="comment"># Machine-readable evaluation results</span>
+│   └── <span class="dir">figures/</span>
+│       ├── augmentation_demo.png
+│       ├── segmentation_demo.png
+│       ├── ga_fitness_curve.png
+│       ├── confusion_matrices.png
+│       ├── roc_curves.png
+│       └── metrics_comparison.png
+├── <span class="dir">src/</span>
+│   ├── config.py                <span class="comment"># Global hyperparameters &amp; paths</span>
+│   ├── dataset_setup.py         <span class="comment"># Kaggle API dataset downloader</span>
+│   ├── preprocessing.py         <span class="comment"># CLAHE, median blur, normalization</span>
+│   ├── segmentation.py          <span class="comment"># Otsu ROI &amp; Lightweight U-Net</span>
+│   ├── data_loader.py           <span class="comment"># PyTorch Dataset &amp; DataLoader</span>
+│   ├── feature_extractor.py     <span class="comment"># EfficientNetB0 fine-tuning &amp; feature export</span>
+│   ├── classifier.py            <span class="comment"># GridSearchCV tuning for 4 classifiers</span>
+│   ├── evaluate.py              <span class="comment"># Metrics, confusion matrices, ROC-AUC</span>
+│   └── <span class="dir">optimization/</span>
+│       ├── fitness.py           <span class="comment"># GA penalty-aware fitness evaluator</span>
+│       └── ga_selector.py       <span class="comment"># Binary GA optimizer</span>
+├── run_all.py                   <span class="comment"># Master end-to-end pipeline orchestrator</span>
+├── requirements.txt             <span class="comment"># Python package dependencies</span>
+└── README.md                    <span class="comment"># Project documentation</span>
+  </div>
+</section>
+
+<!-- 8. INSTALLATION -->
+<section id="installation">
+  <h2>8. Installation &amp; Quick Start</h2>
+
+  <h3>Requirements</h3>
+  <ul>
+    <li>Python <strong>3.9 – 3.12</strong> (PyTorch does not support Python 3.13+)</li>
+    <li>~5 GB free disk space (dataset + model weights)</li>
+    <li>Kaggle API token (<code>~/.kaggle/kaggle.json</code>)</li>
+    <li>CUDA GPU (optional — CPU inference is fully supported)</li>
+  </ul>
+
+  <h4>1. Create a Python 3.12 Virtual Environment</h4>
+  <pre>py -3.12 -m venv venv
+.\venv\Scripts\activate          # Windows PowerShell</pre>
+
+  <h4>2. Install PyTorch (CPU build)</h4>
+  <pre>pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu</pre>
+
+  <h4>3. Install All Remaining Dependencies</h4>
+  <pre>pip install streamlit opencv-python-headless pillow scikit-learn scikit-image \
+            scipy xgboost numpy pandas matplotlib seaborn joblib tqdm python-dotenv</pre>
+
+  <h4>4. Download the Dataset</h4>
+  <pre>python src/dataset_setup.py</pre>
+
+  <h4>5. Run the Full Pipeline</h4>
+  <pre>python run_all.py</pre>
+
+  <h4>6. Launch the Web Application</h4>
+  <pre>python -m streamlit run app/streamlit_app.py
+# Open: http://localhost:8501</pre>
+
+  <div class="info-box orange">
+    <strong>Note on GPU:</strong> CUDA availability is detected automatically via <code>torch.cuda.is_available()</code> in <code>config.py</code>. GPU training significantly speeds up EfficientNetB0 fine-tuning (Stage 5).
+  </div>
+</section>
+
+<!-- 9. ARTIFACTS -->
+<section id="artifacts">
+  <h2>9. Generated Figures &amp; Artifacts</h2>
+  <table>
+    <thead><tr><th>#</th><th>Artifact</th><th>Path</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Augmentation Preview</td><td><code>reports/figures/augmentation_demo.png</code></td><td>Grid of original vs. augmented MRI samples</td></tr>
+      <tr><td>2</td><td>Segmentation Demo</td><td><code>reports/figures/segmentation_demo.png</code></td><td>ROI bounding box overlay on sample scans</td></tr>
+      <tr><td>3</td><td>GA Fitness Curve</td><td><code>reports/figures/ga_fitness_curve.png</code></td><td>Best &amp; mean fitness over 40 generations; feature count reduction</td></tr>
+      <tr><td>4</td><td>Confusion Matrices</td><td><code>reports/figures/confusion_matrices.png</code></td><td>4×4 normalized heatmaps for all 4 classifiers</td></tr>
+      <tr><td>5</td><td>ROC Curves</td><td><code>reports/figures/roc_curves.png</code></td><td>One-vs-Rest ROC curves with per-class AUC scores</td></tr>
+      <tr><td>6</td><td>Metrics Comparison</td><td><code>reports/figures/metrics_comparison.png</code></td><td>Bar chart comparing all classifiers across all metrics</td></tr>
+      <tr><td>7</td><td>Metrics JSON</td><td><code>reports/metrics.json</code></td><td>Machine-readable dictionary of all evaluation metrics</td></tr>
+      <tr><td>8</td><td>GA Feature Mask</td><td><code>models/ga_selected_features.npy</code></td><td>630-element binary numpy array — optimal feature selection mask</td></tr>
+      <tr><td>9</td><td>Champion Model</td><td><code>models/best_classifier.joblib</code></td><td>Serialised SVM (RBF) classifier</td></tr>
+      <tr><td>10</td><td>Backbone Weights</td><td><code>models/efficientnet_b0_finetuned.pth</code></td><td>Fine-tuned EfficientNetB0 PyTorch state dict</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 10. DEPENDENCIES -->
+<section id="dependencies">
+  <h2>10. Dependencies</h2>
+  <table>
+    <thead><tr><th>Package</th><th>Version</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td>torch</td><td>≥ 2.0.0</td><td>Deep learning (EfficientNetB0, DataLoader, training)</td></tr>
+      <tr><td>torchvision</td><td>≥ 0.15.0</td><td>Pretrained models &amp; image transforms</td></tr>
+      <tr><td>scikit-learn</td><td>≥ 1.2.0</td><td>SVM, Logistic Regression, Random Forest, GridSearchCV, metrics</td></tr>
+      <tr><td>xgboost</td><td>≥ 1.7.0</td><td>XGBoost gradient boosted classifier</td></tr>
+      <tr><td>opencv-python</td><td>≥ 4.7.0</td><td>Image I/O, CLAHE, median blur, morphological operations</td></tr>
+      <tr><td>pillow</td><td>≥ 9.5.0</td><td>Image file handling in Streamlit app</td></tr>
+      <tr><td>scikit-image</td><td>≥ 0.20.0</td><td>Connected-component analysis in segmentation</td></tr>
+      <tr><td>scipy</td><td>≥ 1.10.0</td><td>Statistical utilities</td></tr>
+      <tr><td>numpy</td><td>≥ 1.23.0</td><td>Numerical arrays (features, masks, metrics)</td></tr>
+      <tr><td>pandas</td><td>≥ 2.0.0</td><td>Dataset index CSVs, results tables</td></tr>
+      <tr><td>matplotlib</td><td>≥ 3.7.0</td><td>Plotting — ROC curves, confusion matrices, GA curves</td></tr>
+      <tr><td>seaborn</td><td>≥ 0.12.0</td><td>Heatmap styling for confusion matrices</td></tr>
+      <tr><td>streamlit</td><td>≥ 1.22.0</td><td>Interactive web application framework</td></tr>
+      <tr><td>joblib</td><td>≥ 1.2.0</td><td>Parallel GA fitness evaluation; model serialisation</td></tr>
+      <tr><td>tqdm</td><td>≥ 4.65.0</td><td>Progress bars for training &amp; feature extraction</td></tr>
+      <tr><td>kaggle</td><td>≥ 1.5.13</td><td>Dataset download via Kaggle API</td></tr>
+      <tr><td>python-dotenv</td><td>≥ 1.0.0</td><td>Environment variable management</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<hr style="margin:40px 0 20px; border:none; border-top:2px solid var(--border);">
+<p style="text-align:center; color:var(--muted); font-size:9pt;">
+  Brain Tumor Detection &amp; Classification Pipeline — Project Documentation<br>
+  Generated: October 2026 &nbsp;|&nbsp; Python 3.12 &nbsp;|&nbsp; EfficientNetB0 + Genetic Algorithm + SVM<br>
+  Dataset: Kaggle Masoud Nickparvar Brain Tumor MRI Dataset (7,200 scans)
+</p>
+
+</body>
+</html>

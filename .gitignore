@@ -1,0 +1,41 @@
+# Virtual Environment
+venv/
+.env
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Large Data Files (too big for GitHub)
+data/raw/
+data/processed/
+data/splits/
+
+# Large Model Files
+models/*.pth
+models/*.npy
+models/*.joblib
+
+# IDE & System Files
+.vscode/
+.idea/
+*.swp
+*.swo
+Thumbs.db
+.DS_Store
+
+# Scratch & Temp Files
+scratch/
+*.log
+*.tmp
+
+# Reports (optional — remove these lines if you want to include generated figures)
+# reports/figures/
+
+# Jupyter Notebooks Checkpoints
+.ipynb_checkpoints/
+

@@ -1,0 +1,178 @@
+{
+    "Softmax": {
+        "accuracy": 0.8888888888888888,
+        "macro_metrics": {
+            "precision": 0.8900525324919255,
+            "recall_sensitivity": 0.888888888888889,
+            "specificity": 0.9629629629629628,
+            "f1_score": 0.8892400317351832,
+            "roc_auc": 0.9802126200274348
+        },
+        "per_class": {
+            "glioma": {
+                "precision": 0.9027237354085603,
+                "recall_sensitivity": 0.8592592592592593,
+                "specificity": 0.9691358024691358,
+                "f1_score": 0.8804554079696395,
+                "roc_auc": 0.9778509373571102,
+                "support": 270
+            },
+            "meningioma": {
+                "precision": 0.797153024911032,
+                "recall_sensitivity": 0.8296296296296296,
+                "specificity": 0.9296296296296296,
+                "f1_score": 0.8130671506352087,
+                "roc_auc": 0.9588477366255144,
+                "support": 270
+            },
+            "pituitary": {
+                "precision": 0.9051094890510949,
+                "recall_sensitivity": 0.9185185185185185,
+                "specificity": 0.9679012345679012,
+                "f1_score": 0.9117647058823529,
+                "roc_auc": 0.9906355738454504,
+                "support": 270
+            },
+            "notumor": {
+                "precision": 0.9552238805970149,
+                "recall_sensitivity": 0.9481481481481482,
+                "specificity": 0.9851851851851852,
+                "f1_score": 0.9516728624535316,
+                "roc_auc": 0.9935162322816644,
+                "support": 270
+            }
+        }
+    },
+    "SVM (RBF)": {
+        "accuracy": 0.9259259259259259,
+        "macro_metrics": {
+            "precision": 0.9265169064251259,
+            "recall_sensitivity": 0.9259259259259259,
+            "specificity": 0.9753086419753086,
+            "f1_score": 0.9260035973929914,
+            "roc_auc": 0.9801508916323731
+        },
+        "per_class": {
+            "glioma": {
+                "precision": 0.9455252918287937,
+                "recall_sensitivity": 0.9,
+                "specificity": 0.9827160493827161,
+                "f1_score": 0.9222011385199241,
+                "roc_auc": 0.9722862368541382,
+                "support": 270
+            },
+            "meningioma": {
+                "precision": 0.8659420289855072,
+                "recall_sensitivity": 0.8851851851851852,
+                "specificity": 0.9543209876543209,
+                "f1_score": 0.8754578754578755,
+                "roc_auc": 0.965313214449017,
+                "support": 270
+            },
+            "pituitary": {
+                "precision": 0.9280575539568345,
+                "recall_sensitivity": 0.9555555555555556,
+                "specificity": 0.9753086419753086,
+                "f1_score": 0.9416058394160584,
+                "roc_auc": 0.9903566529492456,
+                "support": 270
+            },
+            "notumor": {
+                "precision": 0.966542750929368,
+                "recall_sensitivity": 0.9629629629629629,
+                "specificity": 0.9888888888888889,
+                "f1_score": 0.9647495361781077,
+                "roc_auc": 0.9926474622770919,
+                "support": 270
+            }
+        }
+    },
+    "Random Forest": {
+        "accuracy": 0.8814814814814815,
+        "macro_metrics": {
+            "precision": 0.8815634489635076,
+            "recall_sensitivity": 0.8814814814814814,
+            "specificity": 0.9604938271604939,
+            "f1_score": 0.8810053874266822,
+            "roc_auc": 0.9775743026977595
+        },
+        "per_class": {
+            "glioma": {
+                "precision": 0.9058823529411765,
+                "recall_sensitivity": 0.8555555555555555,
+                "specificity": 0.9703703703703703,
+                "f1_score": 0.88,
+                "roc_auc": 0.9735116598079562,
+                "support": 270
+            },
+            "meningioma": {
+                "precision": 0.7902621722846442,
+                "recall_sensitivity": 0.7814814814814814,
+                "specificity": 0.9308641975308642,
+                "f1_score": 0.7858472998137802,
+                "roc_auc": 0.9552583447645177,
+                "support": 270
+            },
+            "pituitary": {
+                "precision": 0.8900343642611683,
+                "recall_sensitivity": 0.9592592592592593,
+                "specificity": 0.9604938271604938,
+                "f1_score": 0.9233511586452763,
+                "roc_auc": 0.9876406035665295,
+                "support": 270
+            },
+            "notumor": {
+                "precision": 0.9400749063670412,
+                "recall_sensitivity": 0.9296296296296296,
+                "specificity": 0.980246913580247,
+                "f1_score": 0.9348230912476723,
+                "roc_auc": 0.9938866026520348,
+                "support": 270
+            }
+        }
+    },
+    "XGBoost": {
+        "accuracy": 0.8851851851851852,
+        "macro_metrics": {
+            "precision": 0.8860575690362925,
+            "recall_sensitivity": 0.8851851851851851,
+            "specificity": 0.9617283950617284,
+            "f1_score": 0.8853718341290536,
+            "roc_auc": 0.9797142203932327
+        },
+        "per_class": {
+            "glioma": {
+                "precision": 0.8996138996138996,
+                "recall_sensitivity": 0.8629629629629629,
+                "specificity": 0.9679012345679012,
+                "f1_score": 0.8809073724007561,
+                "roc_auc": 0.9774622770919067,
+                "support": 270
+            },
+            "meningioma": {
+                "precision": 0.8,
+                "recall_sensitivity": 0.8148148148148148,
+                "specificity": 0.9320987654320988,
+                "f1_score": 0.8073394495412844,
+                "roc_auc": 0.9598445358939187,
+                "support": 270
+            },
+            "pituitary": {
+                "precision": 0.8900709219858156,
+                "recall_sensitivity": 0.9296296296296296,
+                "specificity": 0.9617283950617284,
+                "f1_score": 0.9094202898550725,
+                "roc_auc": 0.9892318244170096,
+                "support": 270
+            },
+            "notumor": {
+                "precision": 0.9545454545454546,
+                "recall_sensitivity": 0.9333333333333333,
+                "specificity": 0.9851851851851852,
+                "f1_score": 0.9438202247191011,
+                "roc_auc": 0.992318244170096,
+                "support": 270
+            }
+        }
+    }
+}
